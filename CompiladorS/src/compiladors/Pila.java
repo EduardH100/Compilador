@@ -2,29 +2,30 @@ package compiladors;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.ListIterator;
 
 public class Pila{ 
         
-    List<Integer> pila = new ArrayList<Integer>();
+    List<ElementoPilaS> pila = new ArrayList<ElementoPilaS>(); 
+    ElementoPilaS Ep = new ElementoPilaS();
     
-    public void push(int x){
-        pila.add(0, x);
+    public void push(ElementoPilaS ep){
+        pila.add(0, ep);
     }
     
-    public int top(){
+    public ElementoPilaS top(){
         return pila.get(0);
     }
     
-    public int pop(){
+    public ElementoPilaS pop(){
         return pila.remove(0);
     }
     
     public  void muestra(){
         System.out.println("Pila: ");
         for(int i = 0; i < pila.size(); i++){
-            System.out.println(pila.get(i));
+            System.out.println(pila.get(i).simbolo); 
         }
+        
     }
     
 }

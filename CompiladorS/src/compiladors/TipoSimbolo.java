@@ -8,7 +8,7 @@ public class TipoSimbolo {
      public static final int REAL = 2;
      public static final int CADENA = 3;
      public static final int TIPODATO = 4;
-     public static final int ADICION = 1;//5 
+     public static final int ADICION = 1; //5
      public static final int MULTIPLICACION = 6; 
      public static final int RELACIONAL = 7;       
      public static final int OR = 8;       
@@ -26,7 +26,7 @@ public class TipoSimbolo {
      public static final int WHILE = 20;       
      public static final int RETURN = 21;       
      public static final int ELSE = 22;       
-     public static final int PESOS = 2;//23        
+     public static final int PESOS = 2; //23        
                
      
 }
