@@ -1,19 +1,23 @@
 package compiladors;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import javax.swing.text.html.HTMLEditorKit;
 //import java.util.regex.*;
 
 public class SintacticoS {
 
-    LexicoS lexico = new LexicoS("a+b");
+    LexicoS lexico = new LexicoS("a+b;");
     Pila pila = new Pila();
-
-    int[] idReglas = new int[2];
-    int[] LioReglas = new int[2];
+    int[][] tablaLR = new int[94][45];
+    String fileName = "LR1.txt", cadF = "";
+    
 
     SintacticoS() throws IOException {
-        //analiza();
-        Ejercicio1();
+        analiza();
+        //Ejercicio2();
     }
 
     private void comprueba(String simbolo) throws IOException {
@@ -25,320 +29,85 @@ public class SintacticoS {
     }
 
     private void analiza() throws IOException {
-        lexico.sigSimbolo();
-        comprueba("$");
-        System.out.println("Cadena valida...");
+        //lexico.sigSimbolo();
+        //comprueba("$");
+        //System.out.println("Cadena valida...");
+        proyecto();
         System.exit(0);
 
         //( ([a-d|A-Z])+ \d* = ([a-d|A-Z]\d)+ (-|+)* ([a-d|A-Z]\d)+ ; )? 
     }
-
-    private void ejemplo1() {
-        pila.push(2);
-        pila.push(3);
-        pila.push(4);
-        pila.push(5);
-        pila.muestra();
-        System.out.println(pila.top());
-        System.out.println(pila.top());
-        System.out.println(pila.pop());
-        System.out.println(pila.pop());
+    
+    private void error(){
+        System.out.println("Error Sintactico...");
+        System.exit(0);
     }
-
-    private void ejemplo2() {
-        lexico.sigSimbolo();
-        while (lexico.simbolo != "$") {
-            lexico.sigSimbolo();
-            System.out.println(lexico.simbolo);
-        }
-    }
-
-    private void ejemplo3() {
-
+    
+    /*private void Ejercicio2() {
+        
         boolean aceptacion = false;
-        int fila, columna, accion;
-        int[][] tablaLR = new int[3][3];
+        int fila, columna, accion = 0, i = 0;
+        int[][] tablaLR = {{2,0,0,1},
+                           {0,0,-1,0},
+                           {0,3,-3,0},
+                           {2,0,0,4},
+                           {0,0,-2,0}
+        };
 
-        tablaLR[0][0] = 2;
-        tablaLR[0][1] = 0;
-        tablaLR[0][2] = 1;
-
-        tablaLR[1][0] = 0;
-        tablaLR[1][1] = -1;
-        tablaLR[1][2] = 0;
-
-        tablaLR[2][0] = 0;
-        tablaLR[2][1] = -2;
-        tablaLR[2][2] = 0;
-
-        pila.push(1); //1 == $
+        pila.push(TipoSimbolo.PESOS); //2 == $
         pila.push(0);
-        lexico.sigSimbolo();
-
-        fila = pila.top();
-        columna = lexico.tipo;
-        accion = tablaLR[fila][columna];
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo);
-        System.out.println("Accion:" + accion);
-
-        pila.push(lexico.tipo);
-        pila.push(accion);
-        lexico.sigSimbolo();
-
-        fila = pila.top();
-        columna = lexico.tipo;
-        accion = tablaLR[fila][columna];
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo);
-        System.out.println("Accion:" + accion);
-
-        pila.pop();
-        pila.pop();
-
-        fila = pila.top();
-        columna = lexico.tipo;
-        accion = tablaLR[fila][columna];
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo);
-        System.out.println("Accion:" + accion);
-
-        fila = pila.top();
-        columna = 2; //No terminal E
-        accion = tablaLR[fila][columna]; // = 1
-
-        //Transicion
-        pila.push(2); //E
-        pila.push(accion);
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo);
-        System.out.println("Accion:" + accion);
-
-        fila = pila.top();
-        columna = lexico.tipo;
-        accion = tablaLR[fila][columna];
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo);
-        System.out.println("Accion:" + accion);
-
-        aceptacion = accion == -1;
-        if (aceptacion) {
-            System.out.println("Aceptación");
-        } else {
-            System.out.println("No aceptación");
-        }
-
-    }
-
-    private void Ejercicio1() {
-        boolean aceptacion = false;
-        int fila, columna, accion;
-        int[][] tablaLR = new int[5][4];
-
-        tablaLR[0][0] = 2;
-        tablaLR[0][1] = 0;
-        tablaLR[0][2] = 0;
-        tablaLR[0][3] = 1;
-
-        tablaLR[1][0] = 0;
-        tablaLR[1][1] = 0;
-        tablaLR[1][2] = -1;
-        tablaLR[1][3] = 0;
-
-        tablaLR[2][0] = 0;
-        tablaLR[2][1] = 3;
-        tablaLR[2][2] = 0;
-        tablaLR[2][3] = 0;
-
-        tablaLR[3][0] = 4;
-        tablaLR[3][1] = 0;
-        tablaLR[3][2] = 0;
-        tablaLR[3][3] = 0;
-
-        tablaLR[4][0] = 0;
-        tablaLR[4][1] = 0;
-        tablaLR[4][2] = -2;
-        tablaLR[4][3] = 0;
-
-        pila.push(2); //2 == $
-        pila.push(0);
-        lexico.sigSimbolo();
-
-        fila = pila.top();
-        columna = lexico.tipo;
-        accion = tablaLR[fila][columna];
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo); //a
-        System.out.println("Accion:" + accion); //2
-
-        pila.push(lexico.tipo);
-        pila.push(accion);
-        lexico.sigSimbolo();
-
-        fila = pila.top();
-        columna = lexico.tipo;
-        accion = tablaLR[fila][columna];
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo); //1
-        System.out.println("Accion:" + accion); //3
-
-        pila.push(lexico.tipo);
-        pila.push(accion);
-        lexico.sigSimbolo();
-
-        fila = pila.top();
-        columna = lexico.tipo;
-        accion = tablaLR[fila][columna];
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo); //0
-        System.out.println("Accion:" + accion); //4
-
-        pila.push(lexico.tipo);
-        pila.push(accion);
-        lexico.sigSimbolo();
-
-        fila = pila.top();
-        columna = lexico.tipo;
-        accion = tablaLR[fila][columna];
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo); //2
-        System.out.println("Accion:" + accion); //r1
-
-        pila.pop();
-        pila.pop();
-
-        fila = pila.top();
-        columna = 3; //No terminal E
-        accion = tablaLR[fila][columna];
-
-        //Transicion
-        pila.push(3); //E
-        pila.push(1); //1?
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo); // 2
-        System.out.println("Accion:" + accion); //r0
-
-        fila = pila.top(); //1
-        columna = lexico.tipo; //2
-        accion = tablaLR[fila][columna];
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo);
-        System.out.println("Accion:" + accion);
-
-        aceptacion = accion == -1;
-        if (aceptacion) {
-            System.out.println("Aceptación");
-        } else {
-            System.out.println("No aceptación");
-        }
-    }
-
-    private void Ejercicio2() {
-        boolean aceptacion = false;
-        int fila, columna, accion = 0;
-        int[][] tablaLR = new int[5][4];
-
-        tablaLR[0][0] = 2;
-        tablaLR[0][1] = 0;
-        tablaLR[0][2] = 0;
-        tablaLR[0][3] = 1;
-
-        tablaLR[1][0] = 0;
-        tablaLR[1][1] = 0;
-        tablaLR[1][2] = -1;
-        tablaLR[1][3] = 0;
-
-        tablaLR[2][0] = 0;
-        tablaLR[2][1] = 3;
-        tablaLR[2][2] = -3;
-        tablaLR[2][3] = 0;
-
-        tablaLR[3][0] = 2;
-        tablaLR[3][1] = 0;
-        tablaLR[3][2] = 0;
-        tablaLR[3][3] = 4;
-
-        tablaLR[4][0] = 0;
-        tablaLR[4][1] = 0;
-        tablaLR[4][2] = -2;
-        tablaLR[4][3] = 0;
-
-        idReglas[0] = 3;
-        idReglas[1] = 3;
-        LioReglas[0] = 3;
-        LioReglas[1] = 1;
-
-        pila.push(2); //2 == $
-        pila.push(0);
-        lexico.sigSimbolo();
-
-        fila = pila.top();
-        columna = lexico.tipo;
-        accion = tablaLR[fila][columna];
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo); //a
-        System.out.println("Accion:" + accion); //2
+        lexico.sigSimbolo();    //id    
+        
 
         while (!aceptacion) {
+            
+            fila = pila.top();      //0
+            columna = lexico.tipo;  //0
+            accion = tablaLR[fila][columna];   //2
+
+            pila.muestra();
+            System.out.println("Entrada 1:" + lexico.simbolo); //id
+            System.out.println("Accion:" + accion);  
+
             if (accion > 0) {
                 pila.push(lexico.tipo);
                 pila.push(accion);
-                lexico.sigSimbolo();
-            } else if (accion < 0) {
-                pila.pop();
-                pila.pop();
-                pila.pop();
-                if (accion == -3) {
-                    pila.push(2);
-                } else {
-                    pila.push(1);
+                lexico.sigSimbolo();    
+            } 
+            else if (accion < 0) {
+                
+                if(accion == -2) {
+                    for(i = 0; i < (LonReglas[0]); i++){
+                        pila.pop();
+                        pila.pop();
+                    }                
+                    fila = pila.top();      
+                    columna = idReglas[0];  
+                    accion = tablaLR[fila][columna]; 
+                    
+                    pila.push(idReglas[0]); //E
+                    pila.push(accion); 
                 }
+                else if (accion == -3) {
+                    for(i = 0; i < LonReglas[1]; i++){
+                        pila.pop();
+                        pila.pop();
+                    }                
+                    fila = pila.top();      
+                    columna = idReglas[1];  
+                    accion = tablaLR[fila][columna]; 
+                    
+                    pila.push(idReglas[1]); 
+                    pila.push(accion); 
+                } 
+                else break; //accion = -1
+                
             } else {
-                break;
+                error();
+                System.exit(0);
             }
 
-            fila = pila.top();
-            columna = lexico.tipo;
-            accion = tablaLR[fila][columna];
-
-            pila.muestra();
-            System.out.println("Entrada:" + lexico.simbolo); //a
-            System.out.println("Accion:" + accion); //2
-
         }
-
-        fila = pila.top(); // debe ser 0, para aceptar
-        System.out.println("fla:" + fila);
-        columna = 3; //No terminal E
-        accion = tablaLR[fila][columna];
-
-        //Transicion
-        pila.push(3); //E
-        pila.push(accion); //accion = 1?  por esto simpre acepta
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo); // 2
-        System.out.println("Accion:" + accion); //0
-
-        fila = pila.top(); //1
-        columna = lexico.tipo; //2
-        accion = tablaLR[fila][columna];//r0
-
-        pila.muestra();
-        System.out.println("Entrada:" + lexico.simbolo);
-        System.out.println("Accion:" + accion);
 
         aceptacion = accion == -1;
         if (aceptacion) {
@@ -346,6 +115,190 @@ public class SintacticoS {
         } else {
             System.out.println("No aceptación");
         }
-    }
+    }*/
 
+    private void proyecto() throws IOException{
+        
+        boolean aceptacion = false;
+        int i = 0;
+        ReadLRTable();
+        
+        int fila, columna, accion = 0;
+        
+        ElementoPilaS eleAux = new ElementoPilaS();
+        Estado estAux = new Estado(0);
+        Terminal terAux = new Terminal("$");
+        NoTerminal noT = new NoTerminal(0);
+
+        pila.push(terAux); //2 == $
+        pila.push(estAux);
+        lexico.sigSimbolo();    //id    
+        
+
+        while (!aceptacion) {
+            
+            fila = pila.top().tipo;      //0 
+            columna = lexico.tipo;  //0 
+            accion = tablaLR[fila][columna];   //2
+
+            pila.muestra();
+            System.out.println("Entrada 1:" + lexico.simbolo); //id
+            System.out.println("Accion:" + accion);  
+
+            if (accion > 0) {
+                
+                pila.push(new Terminal(columna));
+                pila.push(new Estado(accion));
+                lexico.sigSimbolo();    
+            } 
+            else if (accion < 0) {
+                
+                Nodo nodo = new Nodo();
+                accion = getRule(accion);
+                switch(accion){
+                    case 0: System.out.println("Valido"); break;
+                    case 1: nodo = new Programa(pila, accion); break;
+                    case 2: nodo = new Definiciones(pila, accion); break;
+                    case 3: nodo = new Definiciones(pila, accion); break;
+                    case 4: nodo = new Definicion(pila, accion); break;
+                    case 5: nodo = new Definicion(pila, accion); break;
+                    case 6: nodo = new DefVar(pila, accion); break;
+                    case 7: nodo = new ListaVar(pila, accion); break;
+                    case 8: nodo = new ListaVar(pila, accion); break;
+                    case 9: nodo = new DefFunc(pila, accion); break;
+                    case 10: nodo = new Parametros(pila, accion); break;
+                    case 11: nodo = new Parametros(pila, accion); break;
+                    case 12: nodo = new ListaParam(pila, accion); break;
+                    case 13: nodo = new ListaParam(pila, accion); break;
+                    case 14: nodo = new BloqFunc(pila, accion); break;
+                    case 15: nodo = new DefLocales(pila, accion); break;
+                    case 16: nodo = new DefLocales(pila, accion); break;
+                    case 17: nodo = new DefLocal(pila, accion); break;
+                    case 18: nodo = new DefLocal(pila, accion); break;
+                    case 19: nodo = new Sentencias(pila, accion); break;
+                    case 20: nodo = new Sentencias(pila, accion); break;
+                    case 21: nodo = new Sentencia(pila, accion); break;
+                    case 22: nodo = new Sentencia(pila, accion); break;
+                    case 23: nodo = new Sentencia(pila, accion); break;
+                    case 24: nodo = new Sentencia(pila, accion); break;
+                    case 25: nodo = new Sentencia(pila, accion); break;
+                    case 26: nodo = new Otro(pila, accion); break;
+                    case 27: nodo = new Otro(pila, accion); break;
+                    case 28: nodo = new Bloque(pila, accion); break;
+                    case 29: nodo = new ValorRegresa(pila, accion); break;
+                    case 30: nodo = new ValorRegresa(pila, accion); break;
+                    case 31: nodo = new Argumentos(pila, accion); break;
+                    case 32: nodo = new Argumentos(pila, accion); break;
+                    case 33: nodo = new ListaArgumentos(pila, accion); break;
+                    case 34: nodo = new ListaArgumentos(pila, accion); break;
+                    case 35: nodo = new Termino(pila, accion); break;
+                    case 36: nodo = new Termino(pila, accion); break;
+                    case 37: nodo = new Termino(pila, accion); break;
+                    case 38: nodo = new Termino(pila, accion); break;
+                    case 39: nodo = new Termino(pila, accion); break;
+                    case 40: nodo = new LlamadaFunc(pila, accion); break;
+                    case 41: nodo = new SentenciaBloque(pila, accion); break;
+                    case 42: nodo = new SentenciaBloque(pila, accion); break;
+                    case 43: nodo = new Expresion(pila, accion); break;
+                    case 44: nodo = new Expresion(pila, accion); break;
+                    case 45: nodo = new Expresion(pila, accion); break;
+                    case 46: nodo = new Expresion(pila, accion); break;
+                    case 47: nodo = new Expresion(pila, accion); break;
+                    case 48: nodo = new Expresion(pila, accion); break;
+                    case 49: nodo = new Expresion(pila, accion); break;
+                    case 50: nodo = new Expresion(pila, accion); break;
+                    case 51: nodo = new Expresion(pila, accion); break;
+                    case 52: nodo = new Expresion(pila, accion); break;
+                    
+                    
+                }
+                        
+                noT.nodo = nodo;
+                pila.push(noT);
+                pila.push(new Estado(accion));
+                
+                /************************************************************
+                
+                if(accion.tipo == 2) { //r2
+                    for(i = 0; i < (Reglas.lonReglas[0]); i++){
+                        pila.pop();
+                        pila.pop();
+                    }                
+                    fila = pila.top();      
+                    columna.tipo = Reglas.idReglas[0];  
+                    accion.tipo = tablaLR[fila.tipo][columna.tipo]; 
+                    
+                    noT.simbolo = Reglas.idReglas[0];
+                    pila.push(noT); //E
+                    pila.push(accion); 
+                }
+                else if (accion.tipo == -3) {
+                    for(i = 0; i < Reglas.lonReglas[1]; i++){
+                        pila.pop();
+                        pila.pop();
+                    }                
+                    fila = pila.top();      
+                    columna.tipo = Reglas.idReglas[1];  
+                    accion.tipo = tablaLR[fila.tipo][columna.tipo]; 
+                    
+                    noT.simbolo = Reglas.idReglas[1]; 
+                    pila.push(noT); 
+                    pila.push(accion); 
+                } 
+                else break; //accion = -1
+                
+                **************************************************************/
+                
+            } else {
+                error();
+                System.exit(0);
+            }
+
+        }
+
+        aceptacion = accion == -1;
+        if (aceptacion) {
+            System.out.println("Aceptación");
+        } else {
+            System.out.println("No aceptación");
+        }
+    
+    }   
+    
+    int getRule(int n){
+        n = n*(-1);
+        n--;
+        return n; 
+    }
+    
+    void ReadLRTable() throws FileNotFoundException, IOException{
+        
+        String[] auxS;
+        String aux;
+        int j = 0, k = 0;
+        
+        FileReader f = new FileReader(fileName);
+        BufferedReader br = new BufferedReader(f);
+        while((aux = br.readLine())!=null){
+            cadF += aux;
+        }
+        
+        auxS = cadF.split("\t");
+        
+        for(j = 0; j < 93; j++){     
+            for(k = 0; k < 45; k++){
+                tablaLR[j][k] = Integer.parseInt(auxS[k]);
+                //System.out.println(tablaLR[j][k]);
+                
+            }
+        }
+            
+    }
 }
+
+
+
+
+ 
+
+

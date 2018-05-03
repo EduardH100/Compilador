@@ -51,7 +51,7 @@ public class LexicoS {
          estado = 0;
          simbolo = "";
          try{
-             while(continua && ind <= cadena.length()){
+             while(continua && ind < cadena.length()){
 
                  c = sigChar();
 
@@ -62,18 +62,15 @@ public class LexicoS {
                          else if(isDigit(c)) sigEstado(2); 
                          else if(isOpRelac(c)) sigEstado(4); 
                          else if(isOpIgualdad(c)) sigEstado(5); 
-                         else if(isOpAsig(c)) valido(6); 
-                         else if(isOpAdic(c)) valido(7); 
-                         else if(isOpMul(c)) valido(8); 
-                         else if(isParent(c)) valido(9); 
-                         else if(isPyC(c)) valido(10); 
-                         else if(isLlave(c)) valido(11); 
-                         else if(isOpAND(c)) valido(12); 
-                         else if(isOpOR(c)){
-                             simbolo += c; //los demas lo necesitan
-                             valido(13);
-                         } 
-                         else if(c == '"') sigEstado(6);
+                         else if(isOpAsig(c)) {simbolo += c; valido(6);} 
+                         else if(isOpAdic(c)) {simbolo += c; valido(7);} 
+                         else if(isOpMul(c)) {simbolo += c; valido(8);} 
+                         else if(isParent(c)) {simbolo += c; valido(9);} 
+                         else if(isPyC(c)) {simbolo += c; valido(10);} 
+                         else if(isLlave(c)) {simbolo += c; valido(11);} 
+                         else if(isOpAND(c)) {simbolo += c; valido(12);} 
+                         else if(isOpOR(c)){ simbolo += c; valido(13);} 
+                         else if(c == '"') sigEstado(6); 
                          else if(c == '$') Finalizar();
                          else error();
                          break;
@@ -107,7 +104,7 @@ public class LexicoS {
                      case 5:
                          if(c == '='){
                              simbolo += c;
-                             valido(8);
+                             valido(15);
                          }
                          else valido(6);
                          break;   
@@ -200,26 +197,36 @@ public class LexicoS {
     
     public void valido(int t){
         
-        //TipoSimbolo ts = new TipoSimbolo();
         switch(t){
                  case 1: tipo = TipoSimbolo.IDENTIFICADOR; break;
                  case 2: tipo = TipoSimbolo.ENTERO; break;
                  case 3: tipo = TipoSimbolo.REAL; break;
                  case 4: tipo = TipoSimbolo.RELACIONAL; break; 
                  case 5: tipo = TipoSimbolo.CADENA; break; 
-                 case 6: tipo = TipoSimbolo.ADICION; break; //////////////
+                 case 6: tipo = TipoSimbolo.ASIGNACION; break;
                  case 7: tipo = TipoSimbolo.ADICION; break;
                  case 8: tipo = TipoSimbolo.MULTIPLICACION; break;
-                 case 9: tipo = TipoSimbolo.ASIGNACION; ind -= 1; break; //podria ponerlo en otro case
-                 case 19: tipo = TipoSimbolo.PARENTECISI; break;//
-                 case 10: tipo = TipoSimbolo.PARENTECISD; break;//
-                 case 11: tipo = TipoSimbolo.PC; break;
-                 case 12: tipo = TipoSimbolo.COMA; break;
-                 case 13: tipo = TipoSimbolo.LLAVEI; break;//
-                 case 14: tipo = TipoSimbolo.LLAVED; break;//
-                 case 15: tipo = TipoSimbolo.AND; break;
-                 case 16: tipo = TipoSimbolo.OR; break;
-                 case 17: 
+                 case 9: {
+                     if(c == '(')
+                        tipo = tipo = TipoSimbolo.PARENTECISI;
+                     else
+                        tipo = TipoSimbolo.PARENTECISD;
+                 }break; 
+                 case 10: {
+                     if(c == ';')
+                         tipo = TipoSimbolo.PC;
+                     else
+                         tipo = TipoSimbolo.COMA;
+                 } break;
+                 case 11: {
+                     if(c == '{')
+                        tipo = TipoSimbolo.LLAVEI; 
+                     else
+                        tipo = TipoSimbolo.LLAVED;
+                 } break;
+                 case 12: tipo = TipoSimbolo.AND; break;
+                 case 13: tipo = TipoSimbolo.OR; break;
+                 case 14: {
                      if(isSentencia(simbolo)){
                          if("if".equals(simbolo)) tipo = TipoSimbolo.IF; 
                          else if("while".equals(simbolo)) tipo = TipoSimbolo.WHILE; 
@@ -229,23 +236,25 @@ public class LexicoS {
                      else if(isTipoD(simbolo)){
                          tipo = TipoSimbolo.TIPODATO;        
                      }
+                     //ind -= 1;
+                 }
                  break;
-                 case 18: tipo = TipoSimbolo.IGUALDAD; break;
+                 case 15: tipo = TipoSimbolo.IGUALDAD; break;
                      
-                 default: tipo = TipoSimbolo.ERROR;
-                                           
+                 default: tipo = TipoSimbolo.ERROR;             
              }
+        
         System.out.println(simbolo + " -> " + tipo); 
         
-        if(t != 6)
+        if(t > 0 && t < 7 || t == 14) {
             ind = ind - 1;
-        if(t == 5 || t == 8)
-            ind = ind + 1;
+        }
+        //sigSimbolo();
         continua = false;
     }
     
     public void Finalizar(){
-        System.out.println("Cadena Valida...");
+        System.out.println("Cadena Valida.....");
         tipo = TipoSimbolo.PESOS;
         //System.exit(0);
     }
