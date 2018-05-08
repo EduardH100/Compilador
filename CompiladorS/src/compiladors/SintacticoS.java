@@ -9,10 +9,11 @@ import javax.swing.text.html.HTMLEditorKit;
 
 public class SintacticoS {
 
-    LexicoS lexico = new LexicoS("a+b;");
+    LexicoS lexico = new LexicoS("int x;");
     Pila pila = new Pila();
     int[][] tablaLR = new int[94][45];
-    String fileName = "LR1.txt", cadF = "";
+    String fileName = "LR1.txt"; 
+    String cadF = "";
     
 
     SintacticoS() throws IOException {
@@ -20,7 +21,7 @@ public class SintacticoS {
         //Ejercicio2();
     }
 
-    private void comprueba(String simbolo) throws IOException {
+    private void comprueba(String simbolo){
         if (lexico.simbolo.equals(simbolo)) {
             lexico.sigSimbolo();
         } else {
@@ -28,7 +29,7 @@ public class SintacticoS {
         }
     }
 
-    private void analiza() throws IOException {
+    private void analiza() throws IOException{
         //lexico.sigSimbolo();
         //comprueba("$");
         //System.out.println("Cadena valida...");
@@ -126,24 +127,24 @@ public class SintacticoS {
         int fila, columna, accion = 0;
         
         ElementoPilaS eleAux = new ElementoPilaS();
+        
         Estado estAux = new Estado(0);
         Terminal terAux = new Terminal("$");
-        NoTerminal noT = new NoTerminal(0);
 
-        pila.push(terAux); //2 == $
-        pila.push(estAux);
+        pila.push(terAux);  //$
+        pila.push(estAux);  //0
         lexico.sigSimbolo();    //id    
         
 
         while (!aceptacion) {
             
             fila = pila.top().tipo;      //0 
-            columna = lexico.tipo;  //0 
+            columna = lexico.tipo;  //23
             accion = tablaLR[fila][columna];   //2
 
             pila.muestra();
-            System.out.println("Entrada 1:" + lexico.simbolo); //id
-            System.out.println("Accion:" + accion);  
+            System.out.println("Entrada: " + lexico.simbolo); //id
+            System.out.println("Accion: " + accion);  
 
             if (accion > 0) {
                 
@@ -152,11 +153,12 @@ public class SintacticoS {
                 lexico.sigSimbolo();    
             } 
             else if (accion < 0) {
-                
+                    
                 Nodo nodo = new Nodo();
                 accion = getRule(accion);
+                
                 switch(accion){
-                    case 0: System.out.println("Valido"); break;
+                    case 0: aceptacion = true; break;
                     case 1: nodo = new Programa(pila, accion); break;
                     case 2: nodo = new Definiciones(pila, accion); break;
                     case 3: nodo = new Definiciones(pila, accion); break;
@@ -212,42 +214,16 @@ public class SintacticoS {
                     
                     
                 }
-                        
+                
+                NoTerminal noT = new NoTerminal(accion);
                 noT.nodo = nodo;
+                
+                fila = pila.top().tipo;
+                columna = Reglas.idReglas[accion];
+                accion = tablaLR[fila][columna];
+                       
                 pila.push(noT);
                 pila.push(new Estado(accion));
-                
-                /************************************************************
-                
-                if(accion.tipo == 2) { //r2
-                    for(i = 0; i < (Reglas.lonReglas[0]); i++){
-                        pila.pop();
-                        pila.pop();
-                    }                
-                    fila = pila.top();      
-                    columna.tipo = Reglas.idReglas[0];  
-                    accion.tipo = tablaLR[fila.tipo][columna.tipo]; 
-                    
-                    noT.simbolo = Reglas.idReglas[0];
-                    pila.push(noT); //E
-                    pila.push(accion); 
-                }
-                else if (accion.tipo == -3) {
-                    for(i = 0; i < Reglas.lonReglas[1]; i++){
-                        pila.pop();
-                        pila.pop();
-                    }                
-                    fila = pila.top();      
-                    columna.tipo = Reglas.idReglas[1];  
-                    accion.tipo = tablaLR[fila.tipo][columna.tipo]; 
-                    
-                    noT.simbolo = Reglas.idReglas[1]; 
-                    pila.push(noT); 
-                    pila.push(accion); 
-                } 
-                else break; //accion = -1
-                
-                **************************************************************/
                 
             } else {
                 error();
@@ -256,7 +232,7 @@ public class SintacticoS {
 
         }
 
-        aceptacion = accion == -1;
+        //aceptacion = accion == -1;
         if (aceptacion) {
             System.out.println("Aceptación");
         } else {
@@ -275,7 +251,7 @@ public class SintacticoS {
         
         String[] auxS;
         String aux;
-        int j = 0, k = 0;
+        int j = 0, k = 0, n = 0;
         
         FileReader f = new FileReader(fileName);
         BufferedReader br = new BufferedReader(f);
@@ -285,12 +261,20 @@ public class SintacticoS {
         
         auxS = cadF.split("\t");
         
+        for(j = 0; j < 94; j++){     
+            for(k = 0; k < 45; k++){
+                tablaLR[j][k] = Integer.parseInt(auxS[n]); 
+                n++;
+            }
+        }
+        
         for(j = 0; j < 93; j++){     
             for(k = 0; k < 45; k++){
-                tablaLR[j][k] = Integer.parseInt(auxS[k]);
-                //System.out.println(tablaLR[j][k]);
+                //tablaLR[j][k] = Integer.parseInt(auxS[k]);
+                System.out.print(tablaLR[j][k] + " | ");
                 
             }
+            System.out.println();
         }
             
     }

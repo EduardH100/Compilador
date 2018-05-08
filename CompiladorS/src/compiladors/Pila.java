@@ -23,7 +23,7 @@ public class Pila{
     public  void muestra(){
         System.out.println("Pila: ");
         for(int i = 0; i < pila.size(); i++){
-            System.out.println(pila.get(i).simbolo); 
+            System.out.println(pila.get(i).tipo); 
         }
         
     }

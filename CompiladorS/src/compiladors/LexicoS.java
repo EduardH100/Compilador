@@ -8,6 +8,7 @@ import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
 import static java.lang.Character.isSpaceChar;
 import static java.lang.Character.isLetterOrDigit;
+import static java.lang.Character.isWhitespace;
 
 public class LexicoS {
     
@@ -57,7 +58,7 @@ public class LexicoS {
 
                  switch(estado){
                      case 0: 
-                         if(isSpaceChar(c)) sigEstado(0);
+                         if(isSpaceChar(c) || isWhitespace(c)) sigEstado(0);
                          else if(isLetter(c)) sigEstado(1);
                          else if(isDigit(c)) sigEstado(2); 
                          else if(isOpRelac(c)) sigEstado(4); 
@@ -254,7 +255,7 @@ public class LexicoS {
     }
     
     public void Finalizar(){
-        System.out.println("Cadena Valida.....");
+        //System.out.println("Cadena Valida.....");
         tipo = TipoSimbolo.PESOS;
         //System.exit(0);
     }
